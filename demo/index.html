@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="IoT 智能运维平台 · 工业、楼宇、家居三场景统一接入的运维驾驶舱">
+<meta name="robots" content="noindex">
+<title>KHALILZHENG · IoT 智能运维平台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#101514; --muted:#66716c; --lime:#b6f665; --mint:#78f7ce;
+  --paper:#f3f4ee; --line:rgba(16,21,20,.14);
+  --deep:#18211e; --deep2:#22302a; --deep3:#0e1512;
+  --mono:'DM Mono','JetBrains Mono',ui-monospace,Consolas,monospace;
+  --sans:'Manrope','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+.container{width:min(1180px,calc(100% - 64px));margin:auto}
+section[id],main[id]{scroll-margin-top:52px}
+
+/* ---------- noise ---------- */
+.noise{pointer-events:none;position:fixed;inset:0;opacity:.035;z-index:50;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")}
+
+/* ---------- nav ---------- */
+.nav{height:90px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:5}
+.brand{font:500 13px var(--mono);letter-spacing:.12em;color:var(--ink);text-decoration:none;display:flex;gap:9px;align-items:center}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 5px rgba(182,246,101,.2)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{font-size:13px;text-decoration:none;color:var(--ink)}
+.nav-links a:hover{color:#3f7a5c}
+.nav-contact{border-bottom:1px solid var(--ink);padding-bottom:4px}
+.nav-contact span{margin-left:6px}
+
+/* ---------- hero ---------- */
+.hero{min-height:640px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:40px}
+.eyebrow{font:500 11px var(--mono);letter-spacing:.12em;color:#53615a;display:flex;align-items:center;gap:9px;text-transform:uppercase}
+.eyebrow span{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime)}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:clamp(46px,5.6vw,78px);letter-spacing:-.07em;line-height:1.04;margin:21px 0 26px;font-weight:700}
+h1 em,h2 em{font-style:normal;color:#549270}
+.hero-text{max-width:430px;line-height:1.85;color:#526059;font-size:15px;margin-bottom:0}
+.hero-actions{margin-top:34px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.button{color:#102012;background:var(--lime);padding:15px 18px;text-decoration:none;font-size:13px;font-weight:700;display:inline-block}
+.button b{font-size:18px;margin-left:18px}
+.text-link,.under-link,.case-link{font-size:13px;color:var(--ink);text-decoration:none;font-weight:700}
+.text-link span,.under-link span,.case-link span{margin-left:8px;font-size:17px}
+.hero-visual{height:500px;position:relative;overflow:hidden;background:#1b2421;border-radius:3px;isolation:isolate}
+.orbit{position:absolute;border:1px solid rgba(120,247,206,.12);border-radius:50%;left:50%;top:47%;transform:translate(-50%,-50%)}
+.orbit-a{width:170px;height:170px}
+.orbit-b{width:300px;height:300px}
+.orbit-c{width:465px;height:465px}
+.node{position:absolute;z-index:2;width:14px;height:14px;border-radius:50%;background:#b6f665;box-shadow:0 0 0 6px rgba(182,246,101,.11),0 0 18px #b6f665}
+.node small{position:absolute;top:24px;left:-12px;white-space:nowrap;color:#8caaa0;font:10px var(--mono)}
+.node i{display:block;width:5px;height:5px;margin:4px;border-radius:50%;background:#14221c}
+.center-node{top:43%;left:49%;width:48px;height:48px;background:#77f4cc;box-shadow:0 0 0 13px rgba(120,247,206,.08),0 0 45px rgba(120,247,206,.8)}
+.center-node .core{width:12px;height:12px;margin:18px;border-radius:50%;background:#173d32}
+.center-node small{top:17px;left:18px;color:#173d32;font-weight:700}
+.node-a{top:22%;left:35%}
+.node-b{top:31%;left:70%}
+.node-c{top:70%;left:33%}
+.network-lines span{position:absolute;height:1px;background:linear-gradient(90deg,transparent,#78f7ce,transparent);opacity:.45;transform-origin:left;left:49%;top:43%;width:145px}
+.network-lines span:nth-child(1){transform:rotate(-135deg)}
+.network-lines span:nth-child(2){transform:rotate(-28deg)}
+.network-lines span:nth-child(3){transform:rotate(136deg);width:172px}
+.network-lines span:nth-child(4){transform:rotate(35deg);width:110px}
+.data-card{position:absolute;right:22px;bottom:22px;width:195px;padding:15px;background:rgba(33,47,42,.92);border:1px solid rgba(120,247,206,.15);backdrop-filter:blur(12px);z-index:2}
+.data-card p{font:9px var(--mono);color:#a0b4aa;margin-bottom:7px;letter-spacing:.06em}
+.data-card strong{font-size:25px;color:#f0fff7}
+.data-card strong span{font-size:12px;color:#93ad9f}
+.data-card small{font-size:9px;color:#9bafa5}
+.data-card small b{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--mint);margin-right:4px}
+.mini-chart{height:35px;display:flex;align-items:flex-end;gap:3px;margin:4px 0 9px}
+.mini-chart i{width:100%;background:linear-gradient(#78f7ce,rgba(120,247,206,.15));height:var(--h)}
+.mini-chart i:nth-child(1){--h:33%}.mini-chart i:nth-child(2){--h:55%}.mini-chart i:nth-child(3){--h:41%}
+.mini-chart i:nth-child(4){--h:76%}.mini-chart i:nth-child(5){--h:59%}.mini-chart i:nth-child(6){--h:92%}
+.mini-chart i:nth-child(7){--h:74%}
+.hero-caption{position:absolute;left:20px;bottom:18px;color:#789087;font:10px var(--mono);letter-spacing:.07em}
+.table-hint{display:none}
+
+/* ---------- strip / 自由滚动 ---------- */
+.strip{background:var(--deep3);padding:30px 0 26px;overflow:hidden}
+.strip-head{width:min(1180px,calc(100% - 64px));margin:0 auto 20px;display:flex;justify-content:space-between;align-items:baseline}
+.strip-head p{font:10px var(--mono);letter-spacing:.12em;color:#7f9288;margin:0}
+.strip-head p:last-child{color:#4f6159}
+.strip-row{display:flex;width:max-content;margin-bottom:14px}
+.strip-row:last-child{margin-bottom:0}
+.strip-half{display:flex;gap:14px;padding-right:14px}
+.strip-half img{height:240px;width:auto;display:block;border:1px solid #2a3831;background:#111a16;object-fit:cover;object-position:top}
+.strip-row.rev{animation:roll-r 62s linear infinite}
+.strip-row.fwd{animation:roll-f 54s linear infinite}
+.strip:hover .strip-row{animation-play-state:paused}
+@keyframes roll-f{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes roll-r{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+/* ---------- statement ---------- */
+.statement{padding:112px 0 90px;background:#dce6df}
+.section-tag{font:11px var(--mono);letter-spacing:.1em;color:#65746d}
+.statement h2{font-size:clamp(34px,4.3vw,58px);line-height:1.18;letter-spacing:-.06em;margin:24px 0 55px}
+.statement h2 span,.approach h2 span,.lead-h2 span{color:#5d9b79}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);padding-top:22px}
+.stats strong{font-size:45px;letter-spacing:-.07em}
+.stats strong span{color:#64a57e;font-size:.62em;margin-left:2px}
+.stats p{font-size:12px;color:#56655e;margin-top:7px;margin-bottom:0}
+
+/* ---------- shared section bits ---------- */
+.section-label{font:11px var(--mono);color:#79857e;letter-spacing:.05em;display:flex;gap:22px}
+.section-label span{color:#35443d}
+.section-label.light{color:#799188}
+.section-label.light span{color:#c2d0c8}
+.approach .section-label{color:#3d7059}
+.approach .section-label span{color:#123f30}
+.lead-h2{font-size:clamp(30px,3.6vw,48px);line-height:1.16;letter-spacing:-.06em;margin:24px 0 0;max-width:760px}
+.lead{font-size:14px;line-height:1.9;color:#5a6862;max-width:640px;margin:22px 0 0}
+
+/* ---------- capability ---------- */
+.capabilities{padding:118px 0 122px}
+.cap-grid{display:grid;grid-template-columns:repeat(4,1fr);margin-top:47px;border-top:1px solid var(--line)}
+.cap-grid article{padding:24px 24px 20px 0;border-right:1px solid var(--line);min-height:300px}
+.cap-grid article:not(:first-child){padding-left:24px}
+.cap-grid article:last-child{border-right:0}
+.cap-grid b{font:11px var(--mono);color:#65a77f}
+.cap-grid h3{font-size:20px;line-height:1.35;margin:29px 0 15px;letter-spacing:-.04em}
+.cap-grid p{font-size:12px;line-height:1.8;color:#617069;min-height:68px}
+.cap-grid ul{list-style:none;padding:0;margin:22px 0 0}
+.cap-grid li{font:10px var(--mono);letter-spacing:.04em;margin:7px 0;color:#3a4b43}
+.cap-grid li:before{content:'+';color:#69a780;margin-right:7px}
+
+/* ---------- table ---------- */
+.table-scroll{overflow-x:auto;margin-top:64px}
+table.spec{width:100%;min-width:720px;border-collapse:collapse}
+table.spec.two{min-width:0}
+table.spec.two td:first-child{width:190px}
+table.spec.two a{color:#185b46;text-decoration:none;border-bottom:1px solid rgba(20,72,53,.45)}
+table.spec th{font:10px var(--mono);letter-spacing:.08em;font-weight:500;color:#65746d;text-align:left;padding:0 20px 12px 0;border-bottom:1px solid var(--ink);white-space:nowrap}
+table.spec td{padding:17px 20px 17px 0;border-bottom:1px solid var(--line);font-size:12.5px;line-height:1.65;color:#4d5b54;vertical-align:top}
+table.spec td:first-child{font-weight:700;color:var(--ink);white-space:nowrap;font-size:13.5px}
+table.spec td em{display:block;font:10px var(--mono);font-style:normal;color:#8b968f;letter-spacing:.04em;margin-top:6px}
+table.spec tr:hover td{background:rgba(182,246,101,.07)}
+
+/* ---------- work / dashboard (dark) ---------- */
+.work{background:var(--deep);color:#eaf0ed;padding:105px 0}
+.work-heading{display:flex;justify-content:space-between;align-items:center}
+.work-heading>p{font:10px var(--mono);color:#80958b;margin:0}
+.featured-project{display:grid;grid-template-columns:.86fr 1.14fr;margin-top:52px;background:var(--deep2)}
+.project-info{padding:49px 40px}
+.project-info .eyebrow{color:#98b0a4}
+.project-info h2{font-size:clamp(34px,3.6vw,48px);line-height:1.04;letter-spacing:-.07em;margin:23px 0}
+.project-desc{color:#afc0b6;line-height:1.8;font-size:13px;max-width:380px}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin:26px 0}
+.tags span{font:9px var(--mono);letter-spacing:.06em;border:1px solid #53665c;padding:6px 8px;color:#bdd0c5}
+.case-link{color:var(--lime);border-bottom:1px solid var(--lime);padding-bottom:5px;display:inline-block}
+.project-screen{margin:37px 37px 37px 0;background:var(--deep3);border-radius:4px;overflow:hidden;box-shadow:-20px 20px 50px rgba(0,0,0,.2);position:relative}
+.screen-top{height:47px;border-bottom:1px solid #2a3831;display:flex;align-items:center;padding:0 16px;font:8px var(--mono);line-height:1.25;letter-spacing:.08em}
+.screen-top span{margin-left:auto;color:#76efc5;font:9px var(--mono);border:1px solid #345648;padding:3px 5px}
+.screen-top i{font-style:normal;letter-spacing:2px;color:#7f9288;margin-left:16px}
+.screen-shot img{display:block;width:100%;height:auto;border-bottom:1px solid #2a3831}
+.screen-foot{display:grid;grid-template-columns:repeat(3,1fr)}
+.screen-foot div{padding:14px 16px;border-right:1px solid #2a3831}
+.screen-foot div:last-child{border-right:0}
+.screen-foot small{display:block;font:8px var(--mono);color:#8a9d93;letter-spacing:.06em;margin-bottom:6px}
+.screen-foot b{font-size:18px;letter-spacing:-.04em}
+.screen-foot em{font-size:8px;color:#74e7bb;font-style:normal;margin-left:6px}
+.ai-insight{border-top:1px solid #2a3831;padding:13px 16px;font-size:9px;background:#121b17}
+.ai-insight b{color:#7cf6ca;font-family:var(--mono);letter-spacing:.06em}
+.ai-insight p{color:#9fb3a8;margin:6px 0 0;line-height:1.6}
+
+/* ---------- dashboard gallery ---------- */
+.gallery{padding:104px 0 118px}
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:52px}
+.dash-item{margin:0;background:var(--deep3);border:1px solid rgba(120,247,206,.12);border-radius:3px;overflow:hidden}
+.dash-item img{display:block;width:100%;height:auto}
+.dash-item figcaption{display:flex;gap:10px;align-items:baseline;padding:12px 13px;font:9.5px var(--mono);letter-spacing:.05em;color:#7f9288;border-top:1px solid rgba(120,247,206,.1)}
+.dash-item figcaption b{color:#78f7ce;font-weight:500}
+.dash-item figcaption i{font-style:normal;color:#5a6b63;margin-left:auto}
+
+/* ---------- detail ---------- */
+.detail{padding:118px 0 122px}
+.detail-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;margin-top:52px}
+.detail-figure{margin:0;background:var(--deep3);border:1px solid rgba(120,247,206,.12);border-radius:3px;overflow:hidden}
+.detail-figure img{display:block;width:100%;height:auto}
+.detail-figure figcaption{padding:12px 14px;font:9.5px var(--mono);letter-spacing:.05em;color:#7f9288;border-top:1px solid rgba(120,247,206,.1);display:flex;gap:10px}
+.detail-figure figcaption b{color:#78f7ce;font-weight:500}
+.detail-figure figcaption i{font-style:normal;color:#5a6b63;margin-left:auto}
+.detail-body h3{font-size:clamp(24px,2.6vw,34px);letter-spacing:-.05em;line-height:1.2;margin:0 0 18px}
+.detail-body p{font-size:13.5px;line-height:1.9;color:#5a6862;margin-bottom:20px}
+.klist{list-style:none;padding:0;margin:26px 0 30px;border-top:1px solid var(--line)}
+.klist li{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px solid var(--line);font-size:12.5px;color:#4d5b54;line-height:1.5}
+.klist li b{font:10px var(--mono);font-weight:400;color:#7d8a83;letter-spacing:.04em;white-space:nowrap;text-align:right}
+.work .klist{border-top-color:#3c4a43;margin:30px 0 0}
+.work .klist li{border-bottom-color:#3c4a43;color:#afc0b6;font-size:12px;padding:11px 0}
+.work .klist li b{color:#80958b}
+.detail-side .detail-figure{position:sticky;top:70px}
+.detail-body .detail-figure{margin-top:8px}
+
+/* ---------- approach / about (mint) ---------- */
+.approach{background:#aee6cb;padding:108px 0 100px}
+.approach h2{font-size:clamp(30px,3.8vw,52px);line-height:1.14;letter-spacing:-.065em;margin:45px 0 58px}
+.approach h2 span{color:#185b46}
+.approach-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(20,72,53,.22)}
+.approach-grid article{padding:22px 35px 0 0}
+.approach-grid article+article{border-left:1px solid rgba(20,72,53,.22);padding-left:35px}
+.approach-grid b{font:11px var(--mono);color:#367b60}
+.approach-grid h3{font-size:20px;margin:30px 0 13px;letter-spacing:-.04em}
+.approach-grid p{font-size:13px;line-height:1.8;max-width:290px;color:#386753}
+.approach .table-scroll{margin-top:78px}
+table.spec.mint th{border-bottom-color:rgba(20,72,53,.5);color:#367b60}
+table.spec.mint td{border-bottom-color:rgba(20,72,53,.18);color:#2f5c49}
+table.spec.mint td:first-child{color:#123f30}
+table.spec.mint td em{color:#417a63}
+table.spec.mint tr:hover td{background:rgba(255,255,255,.28)}
+
+/* ---------- contact ---------- */
+.contact{padding:117px 0 26px}
+.contact h2{font-size:clamp(42px,5.4vw,72px);letter-spacing:-.07em;line-height:1.04;margin:21px 0 37px}
+.contact-email{font-size:clamp(20px,2.8vw,36px);font-weight:600;letter-spacing:-.05em;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--ink);padding-bottom:8px;display:inline-block;word-break:break-all}
+.contact-email b{font-size:.7em;margin-left:13px}
+.contact-note{font:11px var(--mono);color:#7d8a83;margin:26px 0 0;letter-spacing:.03em}
+.contact-bottom{margin-top:112px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:22px;flex-wrap:wrap}
+.contact-bottom p,.contact-bottom a{font:10px var(--mono);letter-spacing:.05em;color:#66736c;text-decoration:none;margin:0}
+.contact-bottom div{display:flex;gap:19px}
+.contact-bottom a:hover{color:var(--ink)}
+
+/* ---------- reveal ---------- */
+html.js section,html.js .cap-grid article,html.js .dash-item,html.js .detail-figure,html.js .klist li,html.js .approach-grid article{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+html.js section.in,html.js .in{opacity:1;transform:none}
+
+@media(max-width:1000px){
+  .cap-grid{grid-template-columns:1fr 1fr}
+  .cap-grid article:nth-child(2){border-right:0}
+  .cap-grid article:nth-child(n+3){border-top:1px solid var(--line);padding-left:0}
+  .cap-grid article:nth-child(4){border-right:0}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .detail-grid{grid-template-columns:1fr;gap:34px}
+  .detail-side .detail-figure{position:static}
+  .strip-half img{height:190px}
+}
+@media(max-width:800px){
+  .container{width:min(100% - 36px,600px)}
+  .nav{height:74px}
+  .nav-links{display:none}
+  .hero{grid-template-columns:1fr;gap:20px;padding:48px 0 64px;min-height:0}
+  .hero-visual{height:390px}
+  h1{font-size:44px}
+  .statement{padding:75px 0 62px}
+  .stats strong{font-size:33px}
+  .stats p{font-size:11px}
+  .capabilities,.detail{padding:80px 0 84px}
+  .cap-grid{grid-template-columns:1fr}
+  .cap-grid article{border-right:0;min-height:0;padding:22px 0;border-bottom:1px solid var(--line)}
+  .cap-grid article:nth-child(n+3){padding-left:0}
+  .cap-grid p{min-height:0}
+  .featured-project{grid-template-columns:1fr}
+  .project-info{padding:37px 25px}
+  .project-screen{margin:0 25px 25px}
+  .work{padding:75px 0}
+  .work-heading>p{display:none}
+  .screen-foot b{font-size:15px}
+  .gallery{padding:74px 0 84px}
+  .dash-grid{grid-template-columns:1fr}
+  .klist li{flex-direction:column;gap:4px}
+  .klist li b{text-align:left}
+  .approach{padding:75px 0}
+  .approach-grid{grid-template-columns:1fr}
+  .approach-grid article,.approach-grid article+article{border-left:0;border-bottom:1px solid rgba(20,72,53,.22);padding:20px 0}
+  .approach-grid article:last-child{border-bottom:0}
+  .contact{padding-top:83px}
+  .contact-bottom{margin-top:75px}
+  .orbit-c{width:380px;height:380px}
+  .strip-half img{height:150px}
+  .strip-head p:last-child{display:none}
+  .cap-tail{display:none}
+  table.spec:not(.two){min-width:600px}
+  table.spec.two td:first-child{width:auto;white-space:normal}
+  .table-hint{display:block;font:9.5px var(--mono);letter-spacing:.05em;color:#8b968f;margin:12px 0 0}
+  .approach .table-hint{color:#3d7059}
+}
+@media(max-width:430px){
+  .hero-visual{margin:0 -18px;border-radius:0}
+  .data-card{width:168px;right:14px;bottom:14px}
+  .stats{grid-template-columns:1fr;gap:0}
+  .stats div{padding:14px 0;border-bottom:1px solid var(--line)}
+  .stats div:last-child{border-bottom:0}
+  .contact-email{font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .strip-row{animation:none!important}
+  html.js section,html.js .cap-grid article,html.js .dash-item,html.js .detail-figure,html.js .klist li,html.js .approach-grid article{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<nav class="nav container">
+  <a class="brand" href="#top" aria-label="返回顶部"><i></i> KHALILZHENG</a>
+  <div class="nav-links">
+    <a href="#capability">平台能力</a>
+    <a href="#dashboard">数据看板</a>
+    <a href="#detail">平台细节</a>
+    <a href="#about">项目说明</a>
+    <a class="nav-contact" href="#contact">联系我们 <span>&#8599;</span></a>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero container">
+    <div class="hero-copy">
+      <p class="eyebrow"><span></span> IoT OPERATIONS PLATFORM</p>
+      <h1>让复杂的<br><em>运维现场，</em><br>变得可决策。</h1>
+      <p class="hero-text">把工业园区、楼宇自控与全屋家居三类场景接进同一张图：1,000 台设备、13 个网关、4 种协议，从点位采集到告警、定位、根因分析与工单，一条链路走完。</p>
+      <div class="hero-actions">
+        <a class="button" href="#capability">查看平台能力 <b>&#8595;</b></a>
+        <a class="text-link" href="#dashboard">数据看板 <span>&#8594;</span></a>
+      </div>
+    </div>
+    <div class="hero-visual" aria-label="设备运维网络示意">
+      <div class="orbit orbit-a"></div>
+      <div class="orbit orbit-b"></div>
+      <div class="orbit orbit-c"></div>
+      <div class="network-lines"><span></span><span></span><span></span><span></span></div>
+      <div class="node center-node"><div class="core"></div><small>AI</small></div>
+      <div class="node node-a"><i></i><small>工业园-01</small></div>
+      <div class="node node-b"><i></i><small>楼宇-07</small></div>
+      <div class="node node-c"><i></i><small>家居-03</small></div>
+      <div class="data-card">
+        <p>PLATFORM STATUS</p>
+        <strong>99.7<span>%</span></strong>
+        <div class="mini-chart"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <small><b></b> 平台可用率 · 全链路在线</small>
+      </div>
+      <div class="hero-caption">01 / 03 <span class="cap-tail">&nbsp;·&nbsp; INTELLIGENT OPERATIONS</span></div>
+    </div>
+  </section>
+
+  <!-- ============ STRIP ============ -->
+  <section class="strip" aria-label="平台界面滚动展示">
+    <div class="strip-head">
+      <p>/ PROJECT SCREENS IN MOTION</p>
+      <p>SCROLL TO PAUSE</p>
+    </div>
+    <div class="strip-row fwd" data-strip>
+      <div class="strip-half">
+        <img src="img/dashboard.png" width="1480" height="1000" alt="智能运维驾驶舱总览" loading="lazy">
+        <img src="img/china-map-nation.png" width="1480" height="1000" alt="全国设备分布" loading="lazy">
+        <img src="img/china-map-province.png" width="1480" height="1000" alt="省级下钻" loading="lazy">
+        <img src="img/china-map-city.png" width="1480" height="1000" alt="城市级设备定位" loading="lazy">
+        <img src="img/china-map-device-card.png" width="1480" height="1000" alt="地图设备卡片" loading="lazy">
+        <img src="img/topology.png" width="1480" height="1000" alt="园区设备态势拓扑" loading="lazy">
+        <img src="img/ai-diagnosis.png" width="1480" height="1000" alt="AI 根因分析" loading="lazy">
+        <img src="img/device-detail.png" width="1480" height="1800" alt="设备档案详情" loading="lazy">
+        <img src="img/user-scenes.png" width="1480" height="1000" alt="用户端常用场景" loading="lazy">
+        <img src="img/user-hero.png" width="1480" height="1000" alt="用户端全屋总览" loading="lazy">
+      </div>
+    </div>
+    <div class="strip-row rev" data-strip>
+      <div class="strip-half">
+        <img src="img/user-hero.png" width="1480" height="1000" alt="用户端全屋总览" loading="lazy">
+        <img src="img/device-detail.png" width="1480" height="1800" alt="设备档案详情" loading="lazy">
+        <img src="img/ai-diagnosis.png" width="1480" height="1000" alt="AI 根因分析" loading="lazy">
+        <img src="img/topology.png" width="1480" height="1000" alt="园区设备态势拓扑" loading="lazy">
+        <img src="img/china-map-city.png" width="1480" height="1000" alt="城市级设备定位" loading="lazy">
+        <img src="img/china-map-province.png" width="1480" height="1000" alt="省级下钻" loading="lazy">
+        <img src="img/china-map-nation.png" width="1480" height="1000" alt="全国设备分布" loading="lazy">
+        <img src="img/china-map-device-card.png" width="1480" height="1000" alt="地图设备卡片" loading="lazy">
+        <img src="img/user-scenes.png" width="1480" height="1000" alt="用户端常用场景" loading="lazy">
+        <img src="img/dashboard.png" width="1480" height="1000" alt="智能运维驾驶舱总览" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATEMENT ============ -->
+  <section class="statement">
+    <div class="container">
+      <p class="section-tag">/ WHAT IT DOES</p>
+      <h2>设备、数据与决策，<br><span>在同一条链路上。</span></h2>
+      <div class="stats">
+        <div><strong>1,000</strong><p>台设备接入 · 工业 / 楼宇 / 家居三场景</p></div>
+        <div><strong>99.7<span>%</span></strong><p>平台可用率</p></div>
+        <div><strong>3.3<span>h</span></strong><p>平均 MTTR · 工单闭环</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CAPABILITY ============ -->
+  <section class="capabilities container" id="capability">
+    <div class="section-label">01 <span>PLATFORM CAPABILITIES</span></div>
+    <div class="cap-grid">
+      <article>
+        <b>01</b>
+        <h3>三场景<br>统一接入</h3>
+        <p>工业互联网 / 园区、楼宇自控 / 建筑节能、智能家居 / 全屋智能，共用一套点位与告警模型，而不是三套系统。</p>
+        <ul>
+          <li>LORAWAN · MODBUS TCP</li>
+          <li>NB-IOT · MQTT</li>
+        </ul>
+      </article>
+      <article>
+        <b>02</b>
+        <h3>实时监控<br>与告警</h3>
+        <p>设备态势、实时事件流与多级告警，异常在值班人员发现之前就已经被抓住，并且有据可查。</p>
+        <ul>
+          <li>LIVE EVENTS</li>
+          <li>ALERT &amp; WORKFLOW</li>
+        </ul>
+      </article>
+      <article>
+        <b>03</b>
+        <h3>全国分布<br>四级下钻</h3>
+        <p>全国 → 省 → 市 → 单台设备卡片，任何一台离线设备都能在图上被定位，也能反查同站点邻居。</p>
+        <ul>
+          <li>GEO MAP</li>
+          <li>DRILL DOWN</li>
+        </ul>
+      </article>
+      <article>
+        <b>04</b>
+        <h3>AI 根因分析<br>与知识闭环</h3>
+        <p>按置信度排序列出根因假设，附四步处置建议与历史相似案例，可一键生成工单并回写处置记录。</p>
+        <ul>
+          <li>ROOT CAUSE</li>
+          <li>KNOWLEDGE LOOP</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="table-scroll">
+      <table class="spec">
+        <thead>
+          <tr><th>模块</th><th>关键能力</th><th>交付形态</th><th>典型指标</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>场景接入层<em>INGEST</em></td>
+            <td>工业 / 楼宇 / 家居三场景统一接入，LoRaWAN、Modbus TCP、NB-IoT、MQTT 多协议并存</td>
+            <td>网关 Gateway-01 ~ 13 + 点位配置</td>
+            <td>1,000 台设备<em>5 个区域 · 13 个网关</em></td>
+          </tr>
+          <tr>
+            <td>数据平台层<em>DATA</em></td>
+            <td>时序存储、点位建模、地理归属回填、权限与工单记录</td>
+            <td>云端服务 / 本地化部署</td>
+            <td>网络健康 93.0%<em>消息量 1,230 条 / 分</em></td>
+          </tr>
+          <tr>
+            <td>应用层<em>APP</em></td>
+            <td>运营驾驶舱、全国设备分布、设备档案、实时事件与今日运营快照</td>
+            <td>Web 控制台 + 用户端</td>
+            <td>平台可用率 99.7%<em>今日能耗 2,480 kWh</em></td>
+          </tr>
+          <tr>
+            <td>智能层<em>AI</em></td>
+            <td>根因假设排序、处置建议、历史案例知识闭环、一键生成工单</td>
+            <td>AI 助手 + 开放接口</td>
+            <td>平均 MTTR 3.3 h<em>案例历史平均修复 14 min</em></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-hint">← 左右滑动可查看完整表格 →</p>
+  </section>
+
+  <!-- ============ DASHBOARD (dark band + gallery) ============ -->
+  <section id="dashboard">
+    <div class="work">
+      <div class="container">
+        <div class="work-heading">
+          <div class="section-label light">02 <span>DATA DASHBOARD</span></div>
+          <p>iot-dashboard-demo</p>
+        </div>
+        <article class="featured-project">
+          <div class="project-info">
+            <p class="eyebrow"><span></span> FEATURED VIEW</p>
+            <h2>智能运维<br><em>驾驶舱</em></h2>
+            <p class="project-desc">整个平台的入口视图。设备总数、在线率、异常与活跃告警、园区设备态势、实时事件流和今日运营快照，全部收在一屏里；右上角可一键切换工业、楼宇、家居三类场景。</p>
+            <div class="tags">
+              <span>OPERATIONS CENTER</span><span>LIVE TOPOLOGY</span><span>ALERT FEED</span>
+            </div>
+            <ul class="klist">
+              <li><span>场景切换：工业 / 楼宇 / 家居 一屏切换</span><b>SCENARIOS</b></li>
+              <li><span>实时事件：70 条活跃告警，按等级排序</span><b>ALERTS</b></li>
+              <li><span>设备态势：5 个区域 · 13 个网关 · 健康 93.0%</span><b>TOPOLOGY</b></li>
+              <li><span>今日快照：26.7 ℃ · 1,230 条/分 · 2,480 kWh</span><b>SNAPSHOT</b></li>
+            </ul>
+            <a class="case-link" href="#detail">看一台设备的完整档案 <span>&#8599;</span></a>
+          </div>
+          <div class="project-screen">
+            <div class="screen-top"><b>OPERATION<br>CENTER</b><span>LIVE</span><i>&#8226;&#8226;&#8226;</i></div>
+            <div class="screen-shot">
+              <img src="img/dashboard.png" width="1480" height="1000" alt="IoT 智能运维驾驶舱总览">
+            </div>
+            <div class="screen-foot">
+              <div><small>设备总数</small><b>1,000</b></div>
+              <div><small>在线设备</small><b>930</b><em>93.0%</em></div>
+              <div><small>平台可用率</small><b>99.7%</b><em>活跃告警 70</em></div>
+            </div>
+            <div class="ai-insight">
+              <b>&#10022; AI ROOT CAUSE</b>
+              <p>泵站控制器 0445 · 置信度 75% —— 最高概率根因是「网关侧连接中断」（58%），建议先核对 Gateway-04 的在线与丢包情况，再决定是否断电重连。</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="gallery container">
+      <h2 class="lead-h2">数据不是给人看的，<br><span>是给判断用的。</span></h2>
+      <p class="lead">下面六张都是平台里真实存在的页面。同一套数据，向下能查到某台设备某个点位的实时值，向上能收成一张全国分布图 —— 中间不需要再导一次表。</p>
+      <div class="dash-grid">
+        <figure class="dash-item">
+          <img src="img/china-map-nation.png" width="1480" height="1000" alt="全国设备分布总览" loading="lazy">
+          <figcaption><b>01</b> 全国设备分布 · 实时在线率 <i>MAP</i></figcaption>
+        </figure>
+        <figure class="dash-item">
+          <img src="img/china-map-province.png" width="1480" height="1000" alt="省级设备分布下钻" loading="lazy">
+          <figcaption><b>02</b> 省级下钻 · 分区设备分布 <i>DRILL DOWN</i></figcaption>
+        </figure>
+        <figure class="dash-item">
+          <img src="img/china-map-city.png" width="1480" height="1000" alt="城市级设备定位" loading="lazy">
+          <figcaption><b>03</b> 城市级定位 · 设备空间分布 <i>MAP</i></figcaption>
+        </figure>
+        <figure class="dash-item">
+          <img src="img/topology.png" width="1480" height="1000" alt="园区设备态势与拓扑" loading="lazy">
+          <figcaption><b>04</b> 园区设备态势 · 拓扑与链路 <i>TOPOLOGY</i></figcaption>
+        </figure>
+        <figure class="dash-item">
+          <img src="img/china-map-device-card.png" width="1480" height="1000" alt="地图上的设备卡片与实时读数" loading="lazy">
+          <figcaption><b>05</b> 地图设备卡片 · 实时读数 <i>LIVE DATA</i></figcaption>
+        </figure>
+        <figure class="dash-item">
+          <img src="img/ai-diagnosis.png" width="1480" height="1000" alt="AI 根因分析与处置建议" loading="lazy">
+          <figcaption><b>06</b> AI 根因分析 · 置信度排序与处置建议 <i>AI</i></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DETAIL ============ -->
+  <section class="detail container" id="detail">
+    <div class="section-label">03 <span>PLATFORM DETAILS</span></div>
+    <div class="detail-grid">
+      <div class="detail-side">
+        <figure class="detail-figure">
+          <img src="img/device-detail.png" width="1480" height="1800" alt="设备档案详情：泵站控制器 0445" loading="lazy">
+          <figcaption><b>DEVICE PROFILE</b> 泵站控制器 0445 <i>IOT-0445</i></figcaption>
+        </figure>
+      </div>
+      <div class="detail-body">
+        <h3>单台设备的完整档案。</h3>
+        <p>从全国分布图上点中一台设备，能一路钻到它的档案页：实时参数、8 小时趋势、同站点邻居设备、运行健康度，以及这台设备历史上开过哪些工单 —— 全部挂在同一个 ID 下面。</p>
+        <ul class="klist">
+          <li><span>实时参数：温度 65% · 27.4 ℃ · 最后上报 109 分钟前</span><b>TELEMETRY</b></li>
+          <li><span>运行健康：通信健康度 24 分 · 供电正常 · 固件 v1.4.4</span><b>HEALTH</b></li>
+          <li><span>同站点设备：260 台（E 区配电房 · Gateway-04）</span><b>PEER DEVICES</b></li>
+          <li><span>工单记录：累计 3 单 · 平均 MTTR 3.3 小时</span><b>WORK ORDERS</b></li>
+        </ul>
+        <p>同一套模型往下走一层就是用户端：家居场景里同样的设备、房间与告警，换成住户能看懂的样子 —— 常用场景一键执行，异常设备单独列在「需要你关注」下面。</p>
+        <figure class="detail-figure">
+          <img src="img/user-scenes.png" width="1480" height="1000" alt="用户端 HomeFlow 常用场景" loading="lazy">
+          <figcaption><b>END-USER APP</b> HomeFlow · 全屋智能场景 <i>92 台设备</i></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT PROJECT (mint) ============ -->
+  <section class="approach" id="about">
+    <div class="container">
+      <div class="section-label light">04 <span>ABOUT THIS PROJECT</span></div>
+      <h2>一个自己从 0 搭到<br>能跑的<span> IoT 运维平台。</span></h2>
+      <div class="approach-grid">
+        <article>
+          <b>01</b>
+          <h3>三场景统一建模</h3>
+          <p>工业、楼宇、家居不是三套系统，而是同一套点位与告警模型下的三个场景视图。</p>
+        </article>
+        <article>
+          <b>02</b>
+          <h3>全链路闭环</h3>
+          <p>接入 → 监控 → 定位 → 根因分析 → 工单，每一步都在页面上有对应落点，不只是画了几张图。</p>
+        </article>
+        <article>
+          <b>03</b>
+          <h3>数据可回放</h3>
+          <p>内置 1,000 台虚拟设备与消息流，用来验证告警阈值、拓扑联动与 AI 诊断的完整链路。</p>
+        </article>
+      </div>
+      <div class="table-scroll">
+        <table class="spec mint two">
+          <thead>
+            <tr><th>项目</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>项目名称<em>PROJECT</em></td><td>IoT 智能运维平台 · 智能运维驾驶舱</td></tr>
+            <tr><td>覆盖场景<em>SCENARIOS</em></td><td>工业互联网 / 园区 · 楼宇自控 / 建筑节能 · 智能家居 / 全屋智能</td></tr>
+            <tr><td>设备规模<em>SCALE</em></td><td>1,000 台设备 · 930 台在线 · 13 个网关 · 5 个区域 · 网络健康 93.0%</td></tr>
+            <tr><td>接入协议<em>PROTOCOLS</em></td><td>LoRaWAN · Modbus TCP · NB-IoT · MQTT</td></tr>
+            <tr><td>主要视图<em>VIEWS</em></td><td>运营驾驶舱 · 全国设备分布（四级下钻）· 设备档案 · AI 根因分析 · 用户端 HomeFlow</td></tr>
+            <tr><td>在线地址<em>LIVE DEMO</em></td><td><a href="https://khalilzheng.cn/iot-dashboard-demo/" target="_blank" rel="noopener">khalilzheng.cn/iot-dashboard-demo/</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-hint">← 左右滑动可查看完整表格 →</p>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="contact container" id="contact">
+    <p class="eyebrow"><span></span> LET'S TALK</p>
+    <h2>有一个运维现场<br><em>值得被数字化？</em></h2>
+    <a class="contact-email" href="mailto:khalilyong221@gmail.com">khalilyong221@gmail.com <b>&#8599;</b></a>
+    <p class="contact-note">邮件一般 1 个工作日内回复 · 微信 / 电话待定</p>
+    <div class="contact-bottom">
+      <p>&#169; 2026 KHALILZHENG &#183; DEMO</p>
+      <div>
+        <a href="https://khalilzheng.cn/iot-dashboard-demo/" target="_blank" rel="noopener">在线演示</a>
+        <a href="https://github.com/khalilyong221" target="_blank" rel="noopener">GITHUB</a>
+        <a href="#top">BACK TO TOP</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+document.documentElement.classList.add('js');
+
+/* 平滑滚动 */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+
+/* 进场动画（带兜底：观察器不可用或未触发时全部显示） */
+var REVEAL = 'section, .cap-grid article, .dash-item, .detail-figure, .klist li, .approach-grid article';
+function revealAll(){ document.querySelectorAll(REVEAL).forEach(function(el){ el.classList.add('in'); }); }
+if (!('IntersectionObserver' in window)) {
+  revealAll();
+} else {
+  var fired = false;
+  var io = new IntersectionObserver(function(entries){
+    fired = true;
+    entries.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:.12});
+  document.querySelectorAll(REVEAL).forEach(function(el){ io.observe(el); });
+  setTimeout(function(){ if (!fired) revealAll(); }, 1500);
+}
+
+/* 滚动条带：按需重复内容，保证半段宽度足够无缝循环 */
+document.querySelectorAll('[data-strip]').forEach(function(row){
+  var half = row.querySelector('.strip-half');
+  if (!half) return;
+  var unit = half.innerHTML;
+  var guard = 0;
+  while (half.getBoundingClientRect().width < 2800 && guard < 8) { half.innerHTML += unit; guard++; }
+  var clone = half.cloneNode(true);
+  clone.setAttribute('aria-hidden','true');
+  row.appendChild(clone);
+});
+</script>
+</body>
+</html>
