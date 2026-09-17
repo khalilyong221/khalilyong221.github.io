@@ -1,6 +1,6 @@
 # khalilzheng.cn
 
-郑永（Khalil Zheng）的个人站点。
+khalilzheng 的个人站点。
 
 - **线上地址**：https://khalilzheng.cn
 - **托管**：GitHub Pages（`main` 分支根目录，静态托管，无构建步骤）
