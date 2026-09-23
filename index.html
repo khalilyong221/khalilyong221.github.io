@@ -50,7 +50,7 @@
   ul.works{list-style:none;margin:0;padding:0}
   ul.works li{border-bottom:1px solid var(--line)}
   ul.works li:first-child{border-top:1px solid var(--line)}
-  ul.works a{
+  ul.works a,ul.works .item{
     display:flex;align-items:baseline;gap:14px;
     padding:16px 2px;text-decoration:none;color:var(--fg);
     transition:color .15s ease;
@@ -59,6 +59,7 @@
   ul.works .t{font-weight:500}
   ul.works .d{color:var(--muted);font-size:13.5px}
   ul.works .arrow{margin-left:auto;color:var(--faint);font-size:14px;transition:color .15s ease}
+  ul.works .tag{margin-left:auto;color:var(--faint);font-size:12.5px;letter-spacing:.04em;white-space:nowrap}
   ul.works a:hover .arrow{color:var(--accent)}
 
   p.about{margin:0;color:#c4c4c4}
@@ -92,25 +93,25 @@
   <h2>作品</h2>
   <ul class="works">
     <li>
-      <a href="https://khalilzheng.cn/demo/">
+      <a href="/demo/">
         <span class="t">IoT Operations Center</span>
         <span class="d">AI 运维平台</span>
-        <span class="arrow">↗</span>
+        <span class="arrow">→</span>
       </a>
     </li>
     <li>
-      <a href="https://khalilzheng.cn/nuanshu-hvac-platform/showcase.html">
+      <div class="item">
         <span class="t">暖枢 NUANSHU</span>
         <span class="d">暖通智能化平台</span>
-        <span class="arrow">↗</span>
-      </a>
+        <span class="tag">现场演示</span>
+      </div>
     </li>
     <li>
-      <a href="https://khalilzheng.cn/pathfinder-lab/">
+      <div class="item">
         <span class="t">PathFinder Lab</span>
         <span class="d">寻路算法可视化实验室</span>
-        <span class="arrow">↗</span>
-      </a>
+        <span class="tag">现场演示</span>
+      </div>
     </li>
   </ul>
 
@@ -124,7 +125,6 @@
 
   <footer>
     <span>© 2026 khalilzheng</span>
-    <a href="https://github.com/khalilyong221" target="_blank" rel="noopener">GitHub</a>
   </footer>
 
 </main>
