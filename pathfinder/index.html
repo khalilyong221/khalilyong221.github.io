@@ -4,63 +4,281 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PathFinder Lab · khalilzheng</title>
-<meta name="description" content="PathFinder Lab — 零依赖的寻路算法可视化实验室，实时演示 BFS / DFS / Dijkstra / A* 的搜索过程。">
+<meta name="description" content="寻路算法可视化实验室 —— 一张网格上实时演示四种算法的搜索过程。">
+<meta name="theme-color" content="#0a1410">
 <meta property="og:title" content="PathFinder Lab · khalilzheng">
-<meta property="og:description" content="PathFinder Lab — 零依赖的寻路算法可视化实验室，实时演示 BFS / DFS / Dijkstra / A* 的搜索过程。">
-<meta property="og:type" content="website">
+<meta property="og:description" content="寻路算法可视化实验室 —— 一张网格上实时演示四种算法的搜索过程。">
+<meta property="og:type" content="article">
 <meta property="og:url" content="https://khalilzheng.cn/pathfinder/">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <style>
-  :root{
-    --bg:#121212; --fg:#eaeaea; --muted:#8a8a8a; --faint:#5a5a5a;
-    --line:#262626; --accent:#1ed760;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{
-    background:var(--bg); color:var(--fg);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-    font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
-    padding:64px 24px 92px;
-  }
-  main{max-width:640px;margin:0 auto}
-  .back{display:inline-block;color:var(--faint);text-decoration:none;font-size:13px;letter-spacing:.04em;margin-bottom:46px;transition:color .15s ease}
-  .back:hover{color:var(--accent)}
-  h1{font-size:28px;font-weight:500;letter-spacing:.4px;margin:0 0 10px}
-  .sub{color:var(--muted);margin:0 0 22px}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chips span{font-size:12.5px;color:var(--muted);border:1px solid var(--line);padding:3px 9px}
-  hr{border:0;border-top:1px solid var(--line);margin:40px 0 32px}
-  h2{font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:0 0 18px}
-  p.body{margin:0 0 16px;color:#c4c4c4}
-  p.pending{color:var(--faint);font-size:13px;margin:28px 0 0;padding-left:13px;border-left:2px solid var(--line)}
-  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);color:var(--faint);font-size:13px}
-  @media (max-width:520px){
-    body{padding:44px 20px 68px}
-    h1{font-size:24px}
-  }
+:root{
+  --bg:#ffffff; --paper:#f5f7f4;
+  --ink:#0f1512; --ink2:#3d4b44; --muted:#6b7a72; --faint:#9aa8a1;
+  --line:rgba(15,21,18,.13); --line-s:rgba(15,21,18,.07);
+  --deep:#0a1410; --accent:#0f9d4c; --accent-br:#1ed760;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.72;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%;height:auto;display:block}
+::selection{background:rgba(30,215,96,.3)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.container{width:min(1140px,calc(100% - 48px));margin:0 auto}
+
+/* ── 顶栏（与首页同一套） ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;border-bottom:1px solid transparent;transition:background .25s ease,border-color .25s ease,box-shadow .25s ease}
+.nav.scrolled{background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom-color:var(--line);box-shadow:0 1px 14px rgba(15,21,18,.05)}
+.nav-in{height:62px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font:500 14px/1 var(--mono);letter-spacing:.04em;text-decoration:none}
+.brand i{width:8px;height:8px;border-radius:50%;background:var(--accent-br);box-shadow:0 0 0 4px rgba(30,215,96,.18)}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{font-size:13.5px;text-decoration:none;color:var(--muted);transition:color .15s ease}
+.nav-links a:hover{color:var(--accent)}
+.nav .on-deep{color:rgba(255,255,255,.72)}
+.nav .on-deep:hover{color:var(--accent-br)}
+.nav .on-deep .brand{color:#fff}
+
+/* ── 项目头（沿用首页 hero 的深色渐变，让透明顶栏可读） ── */
+.p-hero{position:relative;overflow:hidden;padding:132px 0 72px;color:#fff;
+  background:radial-gradient(120% 150% at 18% 0%,#153626 0%,#0a1410 52%,#070c0a 100%)}
+.p-hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(30,215,96,.16) 1px,transparent 1px);background-size:34px 34px;
+  -webkit-mask-image:linear-gradient(to bottom,#000,transparent 78%);mask-image:linear-gradient(to bottom,#000,transparent 78%)}
+.p-hero .container{position:relative;z-index:2}
+.eyebrow{display:flex;align-items:center;gap:10px;font:500 12px/1 var(--mono);letter-spacing:.22em;
+  color:rgba(255,255,255,.6);text-transform:uppercase;margin:0 0 22px}
+.eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent-br);box-shadow:0 0 10px rgba(30,215,96,.9);animation:beat 2.4s ease-in-out infinite}
+@keyframes beat{0%,100%{opacity:1}50%{opacity:.35}}
+.p-hero h1{margin:0 0 16px;font-size:clamp(32px,5vw,48px);font-weight:700;letter-spacing:-.02em;line-height:1.16}
+.p-hero h1 .lit{color:var(--accent-br)}
+.p-sub{max-width:660px;margin:0 0 32px;color:rgba(255,255,255,.8);font-size:16px}
+.p-meta{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
+.p-meta li{display:flex;align-items:center;gap:8px;padding:8px 15px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);
+  font-size:12.5px;color:rgba(255,255,255,.78)}
+.p-meta li b{font:600 11px/1 var(--mono);letter-spacing:.1em;color:var(--accent-br);text-transform:uppercase}
+.back{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:rgba(255,255,255,.6);
+  text-decoration:none;margin-bottom:26px}
+.back:hover{color:var(--accent-br)}
+
+/* ── 内容栏 ── */
+main{display:block}
+.sec{padding:72px 0}
+.sec-paper{background:var(--paper)}
+.sec-label{display:flex;align-items:center;gap:14px;font:500 12px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--faint);margin:0 0 30px}
+.sec-label::after{content:"";flex:1;height:1px;background:var(--line)}
+.lead{max-width:760px;margin:0 0 8px;font-size:17px;line-height:1.85;color:var(--ink2)}
+.lead b{color:var(--ink);font-weight:600}
+.lead-tail{margin:14px 0 0;font-size:13.5px;color:var(--muted)}
+
+/* 截图 + 文字 */
+.shots{display:flex;flex-direction:column;gap:76px;margin-top:8px}
+.shot{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:44px;align-items:center}
+.shot.rev .shot-fig{order:2}
+.shot.rev .shot-txt{order:1}
+/* 并排组：图占满整行，文字落到图下方 —— 否则并排两图各被压到约 300px，细节不可读 */
+.shot.wide{grid-template-columns:1fr;gap:30px}
+.shot.wide .shot-fig{order:1}
+.shot.wide .shot-txt{order:2;max-width:820px}
+.shot-fig{margin:0}
+.shot-fig .frame{border-radius:12px;overflow:hidden;border:1px solid var(--line);
+  background:#0b1013;box-shadow:0 18px 44px rgba(15,21,18,.14)}
+.shot-fig img{width:100%}
+.shot-fig figcaption{margin-top:12px;font:400 12px/1.6 var(--mono);color:var(--faint);letter-spacing:.02em}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.idx{font:600 11.5px/1 var(--mono);letter-spacing:.2em;color:var(--accent);margin:0 0 12px}
+.shot-txt h2{margin:0 0 14px;font-size:22px;font-weight:600;letter-spacing:-.01em;line-height:1.35}
+.shot-txt p{margin:0 0 14px;color:var(--ink2);font-size:15px}
+.shot-txt p:last-child{margin-bottom:0}
+.pts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.pts li{position:relative;padding-left:20px;font-size:14px;color:var(--ink2)}
+.pts li::before{content:"▶";position:absolute;left:0;top:0;font-size:9px;line-height:1.95;color:var(--accent)}
+.pts li b{color:var(--ink);font-weight:600}
+
+/* 项目信息表 */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--line-s);vertical-align:top}
+tr:last-child th,tr:last-child td{border-bottom:0}
+th{width:132px;background:var(--paper);color:var(--muted);font:500 11.5px/1.7 var(--mono);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+td{color:var(--ink2)}
+td b{color:var(--ink);font-weight:600}
+.tbl-hint{margin:10px 0 0;font-size:12px;color:var(--faint)}
+
+/* 其它作品 */
+.more{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:26px}
+.m-card{display:block;text-decoration:none;border:1px solid var(--line);border-radius:12px;
+  padding:22px;background:#fff;transition:border-color .15s ease,transform .15s ease,box-shadow .15s ease}
+.m-card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 12px 30px rgba(15,21,18,.08)}
+.m-card .k{font:600 11px/1 var(--mono);letter-spacing:.18em;color:var(--faint);text-transform:uppercase}
+.m-card h3{margin:12px 0 8px;font-size:16px;font-weight:600}
+.m-card p{margin:0;font-size:13.5px;color:var(--muted)}
+.m-card .go{display:inline-block;margin-top:12px;font-size:13px;color:var(--accent);font-weight:600}
+.m-card.now{border-color:var(--accent);background:var(--paper)}
+
+/* 页脚（与首页同一套） */
+footer{background:var(--deep);border-top:1px solid rgba(255,255,255,.1);padding:24px 0 30px}
+.foot{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;font-size:12.5px;color:rgba(255,255,255,.42)}
+.foot .grow{flex:1}
+.foot a{color:rgba(255,255,255,.62);text-decoration:none}
+.foot a:hover{color:var(--accent-br)}
+
+@media (max-width:860px){
+  .shot{grid-template-columns:1fr;gap:24px}
+  .shot.rev .shot-fig{order:1}
+  .shot.rev .shot-txt{order:2}
+  .more{grid-template-columns:1fr}
+  .sec{padding:56px 0}
+  .p-hero{padding:112px 0 56px}
+  .shots{gap:56px}
+}
+@media (max-width:640px){
+  .nav-links{gap:16px}
+  .container{width:calc(100% - 36px)}
+  .duo{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
+
+<nav class="nav" id="nav" aria-label="主导航">
+  <div class="container nav-in">
+    <a class="brand on-deep" href="/"><i></i>khalilzheng</a>
+    <div class="nav-links">
+      <a class="on-deep" href="/#works">作品</a>
+      <a class="on-deep" href="/#about">经历</a>
+      <a class="on-deep" href="/#contact">联系</a>
+    </div>
+  </div>
+</nav>
+
+<header class="p-hero">
+  <div class="container">
+    <a class="back" href="/">← 返回首页 · 全部作品</a>
+    <p class="eyebrow"><span class="pulse"></span>03 / PATHFINDING ALGORITHM VISUALIZER</p>
+    <h1>PathFinder Lab</h1>
+    <p class="p-sub">寻路算法可视化实验室 —— 一张网格上实时演示四种算法的搜索过程。</p>
+    <ul class="p-meta"><li><b>角色</b>独立开发</li><li><b>技术</b>纯 HTML / CSS / JavaScript（零依赖 · 单文件）</li><li><b>许可</b>MIT</li></ul>
+  </div>
+</header>
+
 <main>
-  <a class="back" href="/">&larr; khalilzheng</a>
+  <section class="sec">
+    <div class="container">
+      <h2 class="sec-label">概述 · Overview</h2>
+      <p class="lead">零依赖的纯前端工具，用一张 <b>21 × 45</b> 的网格演示 BFS / DFS / Dijkstra / A* 四种经典算法的搜索过程。
+      四种算法各自独立实现，统一返回 <b>{ visitedInOrder, path }</b>，方便直接比较它们的搜索顺序与效率差异。</p>
+      <p class="lead-tail">这一页只放两张图，因为这个工具本身就这么大 —— 它的价值在交互里，不在页面上。</p>
+    </div>
+  </section>
 
-  <h1>PathFinder Lab</h1>
-  <p class="sub">寻路算法可视化实验室</p>
-  <div class="chips"><span>BFS / DFS / Dijkstra / A*</span><span>零依赖单文件</span><span>随机迷宫生成</span><span>逐帧回放</span></div>
+  <section class="sec sec-paper">
+    <div class="container">
+      <h2 class="sec-label">界面 · Screens</h2>
+      <div class="shots">
+<article class="shot">
+  <figure class="shot-fig">
+    <div class="frame"><img src="../img/pf-1-astar.webp" width="1600" height="810" loading="lazy" alt="A* · 曼哈顿距离启发式 · 本次访问 397 个节点 / 路径长度 162 / 0 ms"></div>
+    <figcaption>A* · 曼哈顿距离启发式 · 本次访问 397 个节点 / 路径长度 162 / 0 ms</figcaption>
+  </figure>
+  <div class="shot-txt">
+    <p class="idx">01 / 03</p>
+    <h2>A*：带启发式的搜索</h2>
+    <p>左边是控制区（选算法、调动画速度、生成随机迷宫），右边是网格。蓝色是算法实际访问过的节点，金色是最终最短路径。A* 用曼哈顿距离估计到终点的代价，所以它不会像 BFS 那样向四周均匀铺开——先朝终点方向探路。同一张迷宫下它只访问了 397 个节点，是四种算法里最省的。</p>
+    <ul class="pts"><li><b>交互</b> —— 拖动起点/终点、按住鼠标左键画墙体</li><li><b>统计</b> —— 访问节点数 / 路径长度 / 求解耗时 / 是否可达</li></ul>
+  </div>
+</article>
+<article class="shot wide">
+  <figure class="shot-fig">
+    <div class="duo">
+      <figure style="margin:0">
+        <div class="frame"><img src="../img/pf-2-dijkstra.webp" width="1600" height="810" loading="lazy" alt="Dijkstra · 按累计代价扩散 · 访问 405"></div>
+        <figcaption>Dijkstra · 按累计代价扩散 · 访问 405</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <div class="frame"><img src="../img/pf-3-bfs.webp" width="1600" height="810" loading="lazy" alt="BFS · 逐层扩散 · 访问 405"></div>
+        <figcaption>BFS · 逐层扩散 · 访问 405</figcaption>
+      </figure>
+    </div>
+    <figcaption>同一张随机迷宫（随机种子固定）· 两者路径长度都是 162</figcaption>
+  </figure>
+  <div class="shot-txt">
+    <p class="idx">02 / 03</p>
+    <h2>同一套网格，四种算法横向对比</h2>
+    <p>这两张跑的是<b>同一张迷宫</b>。因为迷宫用递归回溯生成，本质上是一棵生成树——任意两点之间只有唯一一条通路，所以四种算法求出的路径长度全是 162，差别只落在「访问了多少个节点」上：A* 397、Dijkstra 405、BFS 405、DFS 427。这正是这个工具想让人看到的东西：路径一样长，搜索过程却完全不同。</p>
+    <ul class="pts"><li><b>统一接口</b> —— 四种算法都返回 { visitedInOrder, path }</li><li><b>迷宫生成</b> —— 奇偶网格 + 随机化 DFS 回溯，天然是一棵连通生成树，不会把终点堵死</li></ul>
+  </div>
+</article>
+<article class="shot">
+  <div class="shot-txt" style="grid-column:1/-1;max-width:780px">
+    <p class="idx">03 / 03</p>
+    <h2>一点说明：为什么这四个数字放在一起</h2>
+    <p>运行统计里那四个数字（访问节点数、路径长度、求解耗时、是否可达）是四种算法唯一的公共输出，
+      也是比较它们的唯一公平口径。耗时按毫秒记，小网格上经常是 0 ms —— 想看出差别得把速度拉慢、看访问顺序。</p>
+  </div>
+</article>
+      </div>
+    </div>
+  </section>
 
-  <hr>
+  <section class="sec">
+    <div class="container">
+      <h2 class="sec-label">项目信息 · At a Glance</h2>
+      <div class="tbl-wrap">
+        <table>
+          <tbody>
+<tr><th>项目名称</th><td><b>PathFinder Lab</b> · 寻路算法可视化实验室</td></tr><tr><th>算法</th><td>BFS｜DFS｜Dijkstra｜A*（曼哈顿距离启发式）</td></tr><tr><th>网格</th><td>21 × 45 = 945 个节点</td></tr><tr><th>同图实测</th><td>同一张迷宫：A* 访问 397 · Dijkstra 405 · BFS 405 · DFS 427 个节点；四者路径长度均为 162（生成树性质决定路径唯一）</td></tr><tr><th>迷宫生成</th><td>奇偶网格 + 随机化 DFS 回溯（recursive backtracker），保证起点到终点拓扑连通</td></tr><tr><th>技术</th><td>纯 HTML / CSS / JS · 零依赖 · 单文件 · DOM 节点渲染 + CSS class 切换 + @keyframes 动画</td></tr><tr><th>许可</th><td>MIT</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tbl-hint">← 窄屏可左右滑动查看完整表格 →</p>
+    </div>
+  </section>
 
-  <h2>项目说明</h2>
-  <p class="body">一个零依赖的纯前端寻路算法可视化工具，用一张网格实时演示 BFS、DFS、Dijkstra 与 A*（曼哈顿距离启发式）四种经典算法的搜索过程：逐帧回放节点访问顺序与最终最短路径，速度可调，并给出访问节点数、路径长度、求解耗时与可达性判断。</p>
-  <p class="body">网格支持拖动起点与终点、按住鼠标绘制墙体。随机迷宫基于随机化深度优先回溯（recursive backtracker）在奇偶网格上生长，把（奇数行、奇数列）的格子当作「房间」，在房间之间打通墙壁，因此生成的迷宫必然是一棵连通生成树，不会出现把终点堵死的情况。纯 HTML / CSS / JavaScript 实现，单文件双击即可运行。</p>
-
-  <p class="pending">完整案例页正在整理：算法对比、搜索过程演示与实现要点会陆续补上。</p>
-
-  <footer><span>&copy; 2026 khalilzheng</span></footer>
+  <section class="sec sec-paper">
+    <div class="container">
+      <h2 class="sec-label">其他作品 · More Work</h2>
+      <div class="more">
+    <a class="m-card" href="/demo/"><span class="k">demo</span><h3>IoT Operations Center</h3><p>工业 / 楼宇 / 家居三场景统一的运维平台</p><span class="go">进入 →</span></a>
+    <a class="m-card" href="/nuanshu/"><span class="k">nuanshu</span><h3>暖枢 NUANSHU</h3><p>三端物联网暖通运维平台</p><span class="go">进入 →</span></a>
+    <a class="m-card now" href="/pathfinder/"><span class="k">pathfinder</span><h3>PathFinder Lab</h3><p>寻路算法可视化实验室</p><span class="go">当前页面</span></a>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer>
+  <div class="container foot">
+    <span>© 2026 khalilzheng · 广州</span>
+    <span class="grow"></span>
+    <a href="/">返回首页</a>
+  </div>
+</footer>
+<script>
+(function(){
+  'use strict';
+  var nav = document.getElementById('nav');
+  var deepSections = [document.querySelector('.p-hero')];
+  function onScroll(){
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+    var y = window.scrollY + 40;
+    var onDeep = deepSections.some(function(s){
+      return s && y >= s.offsetTop && y <= s.offsetTop + s.offsetHeight;
+    });
+    document.querySelectorAll('.nav .on-deep').forEach(function(el){
+      el.style.color = onDeep ? '' : 'var(--ink)';
+    });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+})();
+</script>
 </body>
 </html>
