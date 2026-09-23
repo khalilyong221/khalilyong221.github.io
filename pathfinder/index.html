@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PathFinder Lab · khalilzheng</title>
+<meta name="description" content="PathFinder Lab — 零依赖的寻路算法可视化实验室，实时演示 BFS / DFS / Dijkstra / A* 的搜索过程。">
+<meta property="og:title" content="PathFinder Lab · khalilzheng">
+<meta property="og:description" content="PathFinder Lab — 零依赖的寻路算法可视化实验室，实时演示 BFS / DFS / Dijkstra / A* 的搜索过程。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://khalilzheng.cn/pathfinder/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root{
+    --bg:#121212; --fg:#eaeaea; --muted:#8a8a8a; --faint:#5a5a5a;
+    --line:#262626; --accent:#1ed760;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
+    padding:64px 24px 92px;
+  }
+  main{max-width:640px;margin:0 auto}
+  .back{display:inline-block;color:var(--faint);text-decoration:none;font-size:13px;letter-spacing:.04em;margin-bottom:46px;transition:color .15s ease}
+  .back:hover{color:var(--accent)}
+  h1{font-size:28px;font-weight:500;letter-spacing:.4px;margin:0 0 10px}
+  .sub{color:var(--muted);margin:0 0 22px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips span{font-size:12.5px;color:var(--muted);border:1px solid var(--line);padding:3px 9px}
+  hr{border:0;border-top:1px solid var(--line);margin:40px 0 32px}
+  h2{font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:0 0 18px}
+  p.body{margin:0 0 16px;color:#c4c4c4}
+  p.pending{color:var(--faint);font-size:13px;margin:28px 0 0;padding-left:13px;border-left:2px solid var(--line)}
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);color:var(--faint);font-size:13px}
+  @media (max-width:520px){
+    body{padding:44px 20px 68px}
+    h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">&larr; khalilzheng</a>
+
+  <h1>PathFinder Lab</h1>
+  <p class="sub">寻路算法可视化实验室</p>
+  <div class="chips"><span>BFS / DFS / Dijkstra / A*</span><span>零依赖单文件</span><span>随机迷宫生成</span><span>逐帧回放</span></div>
+
+  <hr>
+
+  <h2>项目说明</h2>
+  <p class="body">一个零依赖的纯前端寻路算法可视化工具，用一张网格实时演示 BFS、DFS、Dijkstra 与 A*（曼哈顿距离启发式）四种经典算法的搜索过程：逐帧回放节点访问顺序与最终最短路径，速度可调，并给出访问节点数、路径长度、求解耗时与可达性判断。</p>
+  <p class="body">网格支持拖动起点与终点、按住鼠标绘制墙体。随机迷宫基于随机化深度优先回溯（recursive backtracker）在奇偶网格上生长，把（奇数行、奇数列）的格子当作「房间」，在房间之间打通墙壁，因此生成的迷宫必然是一棵连通生成树，不会出现把终点堵死的情况。纯 HTML / CSS / JavaScript 实现，单文件双击即可运行。</p>
+
+  <p class="pending">完整案例页正在整理：算法对比、搜索过程演示与实现要点会陆续补上。</p>
+
+  <footer><span>&copy; 2026 khalilzheng</span></footer>
+</main>
+</body>
+</html>
