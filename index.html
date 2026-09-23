@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>khalilzheng</title>
-<meta name="description" content="khalilzheng — IoT 项目经理 · 暖通智能化系统集成 · 广州">
-<meta property="og:title" content="khalilzheng">
+<title>khalilzheng · 让哑设备开口说话</title>
+<meta name="description" content="khalilzheng — IoT 项目经理 · 暖通智能化系统集成 · 广州。把冷机、水泵、末端这些哑设备接进系统，让运行数据真正被人用起来。">
+<meta name="theme-color" content="#0a1410">
+<meta property="og:title" content="khalilzheng · 让哑设备开口说话">
 <meta property="og:description" content="IoT 项目经理 · 暖通智能化系统集成 · 广州">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://khalilzheng.cn/">
@@ -13,119 +14,373 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Khalil Zheng",
+  "alternateName": "khalilzheng",
+  "url": "https://khalilzheng.cn/",
+  "jobTitle": "IoT 项目经理",
+  "description": "暖通智能化与物联网系统集成，从现场施工管理做到系统交付",
+  "address": { "@type": "PostalAddress", "addressLocality": "广州", "addressCountry": "CN" }
+}
+</script>
+<script>document.documentElement.classList.add('js')</script>
 <style>
-  :root{
-    --bg:#121212;
-    --fg:#eaeaea;
-    --muted:#8a8a8a;
-    --faint:#5a5a5a;
-    --line:#262626;
-    --accent:#1ed760;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{
-    background:var(--bg);
-    color:var(--fg);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-    font-size:15px;
-    line-height:1.7;
-    -webkit-font-smoothing:antialiased;
-    padding:72px 24px 96px;
-  }
-  main{max-width:640px;margin:0 auto}
+:root{
+  --bg:#ffffff; --paper:#f5f7f4; --card:#ffffff;
+  --ink:#0f1512; --ink2:#3d4b44; --muted:#6b7a72; --faint:#9aa8a1;
+  --line:rgba(15,21,18,.13); --line-s:rgba(15,21,18,.07);
+  --deep:#0a1410; --accent:#0f9d4c; --accent-br:#1ed760;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.72;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%;display:block}
+::selection{background:rgba(30,215,96,.3)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.container{width:min(1140px,calc(100% - 48px));margin:0 auto}
+section[id]{scroll-margin-top:72px}
 
-  .name{font-size:30px;font-weight:500;letter-spacing:.5px;margin:0 0 24px}
-  .name-en{font-size:14px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin:0 0 22px}
-  .role{margin:0 0 4px;color:#cfcfcf}
-  .place{margin:0;color:var(--muted);font-size:14px}
+/* nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;border-bottom:1px solid transparent;transition:background .25s ease,border-color .25s ease,box-shadow .25s ease}
+.nav.scrolled{background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom-color:var(--line);box-shadow:0 1px 14px rgba(15,21,18,.05)}
+.nav-in{height:62px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font:500 14px/1 var(--mono);letter-spacing:.04em;text-decoration:none}
+.brand i{width:8px;height:8px;border-radius:50%;background:var(--accent-br);box-shadow:0 0 0 4px rgba(30,215,96,.18)}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{font-size:13.5px;text-decoration:none;color:var(--muted);transition:color .15s ease}
+.nav-links a:hover{color:var(--accent)}
+.nav .on-deep{color:rgba(255,255,255,.72)}
+.nav .on-deep .brand{color:#fff}
 
-  hr{border:0;border-top:1px solid var(--line);margin:44px 0 32px}
+/* hero */
+.hero{position:relative;overflow:hidden;padding:150px 0 96px;color:#fff;
+  background:radial-gradient(120% 150% at 18% 0%,#153626 0%,#0a1410 52%,#070c0a 100%)}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(30,215,96,.16) 1px,transparent 1px);background-size:34px 34px;
+  -webkit-mask-image:linear-gradient(to bottom,#000,transparent 78%);mask-image:linear-gradient(to bottom,#000,transparent 78%)}
+.hero-c{position:relative;z-index:2}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:56px;align-items:center}
+.hero-visual{position:relative}
+.hv-frame{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 30px 70px rgba(0,0,0,.55);background:#0b1410}
+.hv-frame img{width:100%;height:auto}
+.hv-tag{position:absolute;left:-12px;bottom:-14px;background:var(--accent-br);color:#08160c;
+  font:600 11.5px/1 var(--mono);letter-spacing:.08em;padding:9px 14px;border-radius:999px;
+  box-shadow:0 10px 26px rgba(0,0,0,.45)}
+.eyebrow{display:flex;align-items:center;gap:10px;font:500 12px/1 var(--mono);letter-spacing:.22em;color:rgba(255,255,255,.6);text-transform:uppercase;margin:0 0 24px}
+.eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent-br);box-shadow:0 0 10px rgba(30,215,96,.9);animation:beat 2.4s ease-in-out infinite}
+@keyframes beat{0%,100%{opacity:1}50%{opacity:.35}}
+h1{margin:0 0 24px;font-size:clamp(38px,6.2vw,60px);font-weight:700;letter-spacing:-.02em;line-height:1.14}
+h1 .dim{color:rgba(255,255,255,.5)}
+h1 .lit{color:var(--accent-br)}
+.hero-sub{max-width:600px;margin:0 0 36px;color:rgba(255,255,255,.82);font-size:16px}
+.hero-sub b{color:#fff;font-weight:600}
+.hero-stats{display:flex;flex-wrap:wrap;gap:14px 56px;margin:0 0 40px}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat .n{font:600 26px/1.2 var(--mono);color:var(--accent-br)}
+.stat .l{font-size:12.5px;color:rgba(255,255,255,.62)}
+.actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease,color .15s ease,background .15s ease}
+.btn-p{background:var(--accent-br);color:#08160c}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(30,215,96,.3)}
+.btn-g{border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85)}
+.btn-g:hover{border-color:var(--accent-br);color:var(--accent-br)}
 
-  h2{
-    font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--faint);margin:0 0 20px;
-  }
+/* section */
+.sec{padding:80px 0}
+.sec-paper{background:var(--paper)}
+.sec-label{display:flex;align-items:center;gap:14px;font:500 12px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--faint);margin:0 0 34px}
+.sec-label::after{content:"";flex:1;height:1px;background:var(--line)}
+.sec-label .idx{color:var(--accent)}
 
-  ul.works{list-style:none;margin:0;padding:0}
-  ul.works li{border-bottom:1px solid var(--line)}
-  ul.works li:first-child{border-top:1px solid var(--line)}
-  ul.works a{
-    display:flex;align-items:baseline;gap:14px;
-    padding:16px 2px;text-decoration:none;color:var(--fg);
-    transition:color .15s ease;
-  }
-  ul.works a:hover{color:var(--accent)}
-  ul.works .t{font-weight:500}
-  ul.works .d{color:var(--muted);font-size:13.5px}
-  ul.works .arrow{margin-left:auto;color:var(--faint);font-size:14px;transition:color .15s ease}
-  ul.works a:hover .arrow{color:var(--accent)}
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;text-decoration:none;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.card:hover{transform:translateY(-5px);border-color:rgba(15,157,76,.4);box-shadow:0 18px 44px rgba(15,21,18,.13)}
+.card .cover{aspect-ratio:16/10;background:#eef1ee;border-bottom:1px solid var(--line);overflow:hidden}
+.card .cover img{width:100%;height:100%;object-fit:cover;object-position:top left;transition:transform .4s ease}
+.card:hover .cover img{transform:scale(1.03)}
+.card .body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:9px;flex:1}
+.card .ttl{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card .ttl .t{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.card .ttl .d{font:400 12px/1 var(--mono);color:var(--muted);letter-spacing:.05em}
+.card .ds{margin:0;font-size:13.5px;color:var(--ink2);flex:1}
+.card .tags{display:flex;flex-wrap:wrap;gap:8px}
+.card .tags span{font:400 11.5px/1 var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+.card .go{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--accent);margin-top:2px}
+.card .arrow{position:absolute;top:14px;right:16px;font-size:15px;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5);transition:transform .2s ease}
+.card:hover .arrow{transform:translate(2px,-2px)}
 
-  p.about{margin:0;color:#c4c4c4}
-  p.about + p.about{margin-top:16px}
+/* wall */
+.wall{padding:26px 0 30px;background:var(--deep);overflow:hidden}
+.wall-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 18px;
+  font:500 11px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.wall-head b{color:var(--accent-br);font-weight:600}
+.wall-in{display:flex;gap:14px;overflow-x:auto;padding:2px 24px 16px;scroll-snap-type:x proximity}
+.wall-in::-webkit-scrollbar{height:8px}
+.wall-in::-webkit-scrollbar-track{background:rgba(255,255,255,.07)}
+.wall-in::-webkit-scrollbar-thumb{background:rgba(30,215,96,.5);border-radius:99px}
+.wall-in img{height:196px;width:auto;flex:0 0 auto;border-radius:8px;border:1px solid rgba(255,255,255,.13);scroll-snap-align:start}
 
-  footer{
-    margin-top:56px;padding-top:22px;border-top:1px solid var(--line);
-    display:flex;flex-wrap:wrap;gap:10px 20px;
-    color:var(--faint);font-size:13px;
-  }
-  footer a{color:var(--faint);text-decoration:none;border-bottom:1px solid transparent}
-  footer a:hover{color:var(--accent)}
-  .note{color:var(--faint);font-size:13px;margin:26px 0 0}
+/* timeline + about */
+.tl{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-bottom:46px}
+.tl-s{position:relative;padding-top:24px}
+.tl-s::before{content:"";position:absolute;top:6px;left:0;right:-26px;height:1px;background:var(--line)}
+.tl-s:last-child::before{right:0}
+.tl-d{position:absolute;top:0;left:0;width:14px;height:14px;border-radius:50%;border:1.5px solid var(--faint);background:var(--paper)}
+.tl-s:last-child .tl-d{border-color:var(--accent);background:var(--accent);box-shadow:0 0 0 4px rgba(15,157,76,.16)}
+.tl-no{font:500 11px/1 var(--mono);color:var(--faint);letter-spacing:.18em;margin:0 0 8px}
+.tl-s:last-child .tl-no{color:var(--accent)}
+.tl-nm{font-size:16.5px;font-weight:700;margin:0 0 6px}
+.tl-ds{margin:0;font-size:13.5px;color:var(--muted)}
+.about p{max-width:700px;margin:0 0 15px;color:var(--ink2)}
+.about p:last-child{margin-bottom:0}
 
-  @media (max-width:520px){
-    body{padding:48px 20px 72px}
-    .name{font-size:25px}
-  }
+/* contact */
+.contact{background:var(--deep);border-radius:18px;padding:46px 42px;color:#fff;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:28px}
+.contact h3{margin:0 0 8px;font-size:21px;font-weight:700}
+.contact p{margin:0;font-size:13.5px;color:rgba(255,255,255,.65);max-width:420px}
+.c-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.c-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;font-size:13.5px;font-weight:600;
+  text-decoration:none;cursor:pointer;border:1px solid rgba(255,255,255,.24);color:#fff;background:transparent;font-family:var(--sans);
+  transition:border-color .15s ease,color .15s ease,transform .15s ease,background .15s ease}
+.c-btn:hover{border-color:var(--accent-br);color:var(--accent-br);transform:translateY(-1px)}
+.c-btn.solid{background:var(--accent-br);border-color:var(--accent-br);color:#08160c}
+.c-btn.solid:hover{color:#08160c}
+.c-btn .k{font-family:var(--mono);font-size:12.5px;font-weight:400}
+.c-btn.todo{border-style:dashed;color:rgba(255,255,255,.45);cursor:default}
+.c-btn.todo:hover{transform:none;color:rgba(255,255,255,.45);border-color:rgba(255,255,255,.2)}
+
+footer{background:var(--deep);border-top:1px solid rgba(255,255,255,.1);padding:24px 0 30px}
+.foot{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;font-size:12.5px;color:rgba(255,255,255,.42)}
+.foot .grow{flex:1}
+
+.js .rv{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.js .rv.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .js .rv{opacity:1;transform:none;transition:none}
+  .eyebrow .pulse{animation:none}
+  .card,.card .cover img{transition:none}
+}
+@media (max-width:860px){
+  .tl{grid-template-columns:1fr;gap:0}
+  .tl-s{padding:0 0 28px 28px}
+  .tl-s::before{top:15px;bottom:-2px;left:7px;right:auto;width:1px;height:auto}
+  .tl-s:last-child{padding-bottom:0}
+  .tl-s:last-child::before{display:none}
+}
+@media (max-width:620px){
+  .sec{padding:58px 0}
+  .hero{padding:116px 0 66px}
+  .contact{padding:32px 24px}
+  .nav-links{gap:16px}
+  .wall-in img{height:150px}
+  .cards{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
+
+<nav class="nav" id="nav" aria-label="主导航">
+  <div class="container nav-in">
+    <a class="brand on-deep" href="#top"><i></i>khalilzheng</a>
+    <div class="nav-links">
+      <a class="on-deep" href="#works">作品</a>
+      <a class="on-deep" href="#about">经历</a>
+      <a class="on-deep" href="#contact">联系</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="container hero-c">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow"><span class="pulse"></span>IoT · HVAC Intelligence · Guangzhou</p>
+        <h1>让<span class="dim">哑设备</span><br><span class="lit">开口说话</span></h1>
+        <p class="hero-sub"><b>IoT 项目经理 · 暖通智能化系统集成</b> —— 把冷机、水泵、末端接进系统，让运行数据真正被人用起来。</p>
+        <div class="hero-stats">
+          <div class="stat"><span class="n">6 年</span><span class="l">暖通智能化 · 物联网集成</span></div>
+          <div class="stat"><span class="n">3 个</span><span class="l">独立项目作品</span></div>
+          <div class="stat"><span class="n">全链路</span><span class="l">现场设备 · 上位系统 · 数据</span></div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-p" href="#works">看看作品 ↓</a>
+          <a class="btn btn-g" href="#contact">聊聊合作</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hv-frame"><img src="img/ns-1-console.webp" width="1200" height="750" alt=""></div>
+        <span class="hv-tag">暖通 · 楼宇自控 · 工业物联</span>
+      </div>
+    </div>
+  </div>
+</header>
+
 <main>
 
-  <h1 class="name">khalilzheng</h1>
-
-  <p class="role">IoT 项目经理 · 暖通智能化系统集成</p>
-  <p class="place">广州</p>
-
-  <hr>
-
-  <h2>作品</h2>
-  <ul class="works">
-    <li>
-      <a href="/demo/">
-        <span class="t">IoT Operations Center</span>
-        <span class="d">AI 运维平台</span>
-        <span class="arrow">→</span>
+<section class="sec" id="works" style="padding-top:72px">
+  <div class="container">
+    <h2 class="sec-label rv"><span class="idx">01</span>作品 · Selected Work</h2>
+    <div class="cards">
+      <a class="card rv" href="/demo/">
+        <span class="arrow">↗</span>
+        <div class="cover"><img src="img/iot-1-dashboard.webp" width="1200" height="810" loading="lazy" alt="IoT 智能运维驾驶舱"></div>
+        <div class="body">
+          <div class="ttl"><span class="t">IoT Operations Center</span><span class="d">AI 运维平台</span></div>
+          <p class="ds">把工业园区、楼宇自控与全屋家居三类场景接进同一张图：1,000 台设备、13 个网关、4 种协议，从点位采集到告警、定位、根因分析与工单，一条链路走完。</p>
+          <div class="tags"><span>三场景统一接入</span><span>四级下钻</span><span>AI 根因分析</span></div>
+          <span class="go">查看完整案例 →</span>
+        </div>
       </a>
-    </li>
-    <li>
-      <a href="/nuanshu/">
-        <span class="t">暖枢 NUANSHU</span>
-        <span class="d">暖通智能化平台</span>
-        <span class="arrow">→</span>
+
+      <a class="card rv" href="/nuanshu/">
+        <span class="arrow">↗</span>
+        <div class="cover"><img src="img/ns-1-console.webp" width="1200" height="750" loading="lazy" alt="暖枢服务商中控台"></div>
+        <div class="body">
+          <div class="ttl"><span class="t">暖枢 NUANSHU</span><span class="d">暖通智能化平台</span></div>
+          <p class="ds">面向暖通（HVAC）行业的物联网运维产品：服务商中控台、业主端小程序、硬件中控面板三端围绕同一户住宅的设备状态协同工作，任意一端操作，另外两端同步更新。</p>
+          <div class="tags"><span>三端协同</span><span>暖通温控</span><span>月度健康报告</span></div>
+          <span class="go">查看完整案例 →</span>
+        </div>
       </a>
-    </li>
-    <li>
-      <a href="/pathfinder/">
-        <span class="t">PathFinder Lab</span>
-        <span class="d">寻路算法可视化实验室</span>
-        <span class="arrow">→</span>
+
+      <a class="card rv" href="/pathfinder/">
+        <span class="arrow">↗</span>
+        <div class="cover"><img src="img/pf-1-astar.webp" width="1200" height="780" loading="lazy" alt="PathFinder Lab：A* 在随机迷宫中求解"></div>
+        <div class="body">
+          <div class="ttl"><span class="t">PathFinder Lab</span><span class="d">寻路算法可视化</span></div>
+          <p class="ds">零依赖的纯前端寻路算法可视化工具：BFS、DFS、Dijkstra 与 A* 在同一张 945 节点的网格上逐帧呈现搜索过程，随机迷宫内置、速度可调。</p>
+          <div class="tags"><span>算法可视化</span><span>逐帧回放</span><span>零依赖单文件</span></div>
+          <span class="go">查看完整案例 →</span>
+        </div>
       </a>
-    </li>
-  </ul>
+    </div>
+  </div>
+</section>
 
-  <hr>
+<section class="wall">
+  <div class="container wall-head">
+    <span>/ PROJECT SCREENS · <b>拖动查看全部 15 张</b></span>
+    <span>REAL UI · NOT MOCKUPS</span>
+  </div>
+  <div class="wall-in">
+    <img src="img/iot-1-dashboard.webp" height="196" loading="lazy" alt="IoT 智能运维驾驶舱">
+    <img src="img/ns-1-console.webp" height="196" loading="lazy" alt="暖枢服务商中控台：全国项目运营大屏">
+    <img src="img/pf-1-astar.webp" height="196" loading="lazy" alt="PathFinder Lab：A* 求解随机迷宫">
+    <img src="img/iot-2-map.webp" height="196" loading="lazy" alt="全国设备分布图，四级下钻">
+    <img src="img/ns-3-panel.webp" height="196" loading="lazy" alt="硬件中控面板首页">
+    <img src="img/iot-4-ai.webp" height="196" loading="lazy" alt="AI 根因分析：置信度排序与处置建议">
+    <img src="img/ns-4-monitor.webp" height="196" loading="lazy" alt="暖枢中控台运行监测：设备台账与遥测曲线">
+    <img src="img/pf-2-dijkstra.webp" height="196" loading="lazy" alt="Dijkstra 搜索范围">
+    <img src="img/iot-5-topology.webp" height="196" loading="lazy" alt="园区设备拓扑与网关链路">
+    <img src="img/ns-6-lock.webp" height="196" loading="lazy" alt="硬件面板锁屏：窗边暖光插画与生活提醒">
+    <img src="img/iot-3-device.webp" height="196" loading="lazy" alt="单台设备完整档案">
+    <img src="img/ns-2-app.webp" height="196" loading="lazy" alt="业主端小程序首页">
+    <img src="img/pf-3-bfs.webp" height="196" loading="lazy" alt="BFS 逐层扩散">
+    <img src="img/iot-6-scenes.webp" height="196" loading="lazy" alt="用户端 HomeFlow 全屋智能场景">
+    <img src="img/ns-5-report.webp" height="196" loading="lazy" alt="月度系统健康报告">
+  </div>
+</section>
 
-  <h2>关于</h2>
-  <p class="about">六年暖通智能化与物联网系统集成经验，从现场施工管理做到系统交付。做过幕墙工程现场、ERP 实施，也独立带过 IoT 项目落地——现场设备、上位系统、数据链路这条线基本都趟过。</p>
-  <p class="about">关注楼宇自控与设备侧的智能化：把冷机、水泵、末端这些"哑设备"接进系统，让运行数据真正被人用起来。</p>
+<section class="sec sec-paper" id="about">
+  <div class="container">
+    <h2 class="sec-label rv"><span class="idx">02</span>经历 · Path</h2>
+    <div class="tl rv">
+      <div class="tl-s">
+        <span class="tl-d"></span>
+        <p class="tl-no">STEP 01</p>
+        <h3 class="tl-nm">幕墙工程现场</h3>
+        <p class="tl-ds">从现场施工管理起步，在工地和图纸之间积累工程手感。</p>
+      </div>
+      <div class="tl-s">
+        <span class="tl-d"></span>
+        <p class="tl-no">STEP 02</p>
+        <h3 class="tl-nm">ERP 实施</h3>
+        <p class="tl-ds">转向业务系统落地，理解客户流程与数据如何在系统里跑起来。</p>
+      </div>
+      <div class="tl-s">
+        <span class="tl-d"></span>
+        <p class="tl-no">NOW</p>
+        <h3 class="tl-nm">IoT 项目交付</h3>
+        <p class="tl-ds">独立带 IoT 项目落地，现场设备、上位系统、数据链路这条线基本都趟过。</p>
+      </div>
+    </div>
+    <div class="about rv">
+      <p>六年暖通智能化与物联网系统集成经验，从现场施工管理做到系统交付。做过幕墙工程现场、ERP 实施，也独立带过 IoT 项目落地——现场设备、上位系统、数据链路这条线基本都趟过。</p>
+      <p>关注楼宇自控与设备侧的智能化：把冷机、水泵、末端这些“哑设备”接进系统，让运行数据真正被人用起来。</p>
+    </div>
+  </div>
+</section>
 
-  <p class="note">这个站点还在建设中，内容会陆续补上。</p>
-
-  <footer>
-    <span>© 2026 khalilzheng</span>
-  </footer>
+<section class="sec" id="contact">
+  <div class="container">
+    <h2 class="sec-label rv"><span class="idx">03</span>联系 · Reach Out</h2>
+    <div class="contact rv">
+      <div>
+        <h3>聊聊你的设备</h3>
+        <p>楼宇自控、设备接入或数据链路相关的事，欢迎随时找我。</p>
+      </div>
+      <div class="c-actions">
+        <a class="c-btn solid" href="mailto:khalilyong221@gmail.com">✉ <span class="k">khalilyong221@gmail.com</span></a>
+        <span class="c-btn todo">WeChat <span class="k">待填</span></span>
+      </div>
+    </div>
+  </div>
+</section>
 
 </main>
+
+<footer>
+  <div class="container foot">
+    <span>© 2026 khalilzheng · 广州</span>
+    <span class="grow"></span>
+    <span>版本 B · 作品集（浅色）</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var nav = document.getElementById('nav');
+  var deepSections = [document.querySelector('.hero'), document.querySelector('.wall')];
+  function onScroll(){
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+    var y = window.scrollY + 40;
+    var onDeep = deepSections.some(function(s){
+      return s && y >= s.offsetTop && y <= s.offsetTop + s.offsetHeight;
+    });
+    document.querySelectorAll('.nav .on-deep').forEach(function(el){
+      el.style.color = onDeep ? '' : 'var(--ink)';
+    });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  function revealAll(){
+    document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); });
+  }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:.12});
+    document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+    // 兜底：观察器万一不回调（老浏览器 / 布局异常），1.5s 后强制全部显示，避免整页空白
+    setTimeout(function(){ if (!document.querySelector('.rv.in')) revealAll(); }, 1500);
+  } else {
+    revealAll();
+  }
+})();
+</script>
 </body>
 </html>
