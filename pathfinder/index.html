@@ -36,18 +36,18 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 /* ── 顶栏（与首页同一套） ── */
 .nav{position:fixed;top:0;left:0;right:0;z-index:20;border-bottom:1px solid transparent;transition:background .25s ease,border-color .25s ease,box-shadow .25s ease}
 .nav.scrolled{background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom-color:var(--line);box-shadow:0 1px 14px rgba(15,21,18,.05)}
-.nav-in{height:62px;display:flex;align-items:center;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:10px;font:500 14px/1 var(--mono);letter-spacing:.04em;text-decoration:none}
-.brand i{width:8px;height:8px;border-radius:50%;background:var(--accent-br);box-shadow:0 0 0 4px rgba(30,215,96,.18)}
-.nav-links{display:flex;gap:30px;align-items:center}
-.nav-links a{font-size:13.5px;text-decoration:none;color:var(--muted);transition:color .15s ease}
+.nav-in{height:72px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font:500 20px/1 var(--mono);letter-spacing:.04em;text-decoration:none}
+.brand i{width:9px;height:9px;border-radius:50%;background:var(--accent-br);box-shadow:0 0 0 5px rgba(30,215,96,.18)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{font-size:16px;text-decoration:none;color:var(--muted);transition:color .15s ease}
 .nav-links a:hover{color:var(--accent)}
 .nav .on-deep{color:rgba(255,255,255,.72)}
 .nav .on-deep:hover{color:var(--accent-br)}
 .nav .on-deep .brand{color:#fff}
 
 /* ── 项目头（沿用首页 hero 的深色渐变，让透明顶栏可读） ── */
-.p-hero{position:relative;overflow:hidden;padding:132px 0 72px;color:#fff;
+.p-hero{position:relative;overflow:hidden;padding:142px 0 72px;color:#fff;
   background:radial-gradient(120% 150% at 18% 0%,#153626 0%,#0a1410 52%,#070c0a 100%)}
 .p-hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
   background-image:radial-gradient(rgba(30,215,96,.16) 1px,transparent 1px);background-size:34px 34px;
@@ -137,11 +137,13 @@ footer{background:var(--deep);border-top:1px solid rgba(255,255,255,.1);padding:
   .shot.rev .shot-txt{order:2}
   .more{grid-template-columns:1fr}
   .sec{padding:56px 0}
-  .p-hero{padding:112px 0 56px}
+  .p-hero{padding:122px 0 56px}
   .shots{gap:56px}
 }
 @media (max-width:640px){
-  .nav-links{gap:16px}
+  .nav-links{gap:20px}
+  .brand{font-size:17px}
+  .nav-links a{font-size:15px}
   .container{width:calc(100% - 36px)}
   .duo{grid-template-columns:1fr}
 }
@@ -268,9 +270,12 @@ footer{background:var(--deep);border-top:1px solid rgba(255,255,255,.1);padding:
   var nav = document.getElementById('nav');
   var deepSections = [document.querySelector('.p-hero')];
   function onScroll(){
-    nav.classList.toggle('scrolled', window.scrollY > 10);
+    var scrolled = window.scrollY > 10;
+    nav.classList.toggle('scrolled', scrolled);
+    // ⚠️ 必须叠加 !scrolled：顶栏一旦有了自己的白底，背后是什么颜色就无关了，
+    //    否则「已滚动 → 白底」+「在深色项目头范围内 → 白字」= 白底白字，导航栏直接消失。
     var y = window.scrollY + 40;
-    var onDeep = deepSections.some(function(s){
+    var onDeep = !scrolled && deepSections.some(function(s){
       return s && y >= s.offsetTop && y <= s.offsetTop + s.offsetHeight;
     });
     document.querySelectorAll('.nav .on-deep').forEach(function(el){
