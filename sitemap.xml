@@ -2,18 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://khalilzheng.cn/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-23</lastmod>
   </url>
   <url>
     <loc>https://khalilzheng.cn/demo/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-23</lastmod>
+  </url>
+  <url>
+    <loc>https://khalilzheng.cn/nuanshu/</loc>
+    <lastmod>2026-09-23</lastmod>
+  </url>
+  <url>
+    <loc>https://khalilzheng.cn/pathfinder/</loc>
+    <lastmod>2026-09-23</lastmod>
   </url>
   <url>
     <loc>https://khalilzheng.cn/nuanshu-hvac-platform/showcase.html</loc>
-    <lastmod>2026-09-17</lastmod>
-  </url>
-  <url>
-    <loc>https://khalilzheng.cn/pathfinder-lab/</loc>
-    <lastmod>2026-09-15</lastmod>
+    <lastmod>2026-09-23</lastmod>
   </url>
 </urlset>
