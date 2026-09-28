@@ -231,6 +231,11 @@ footer{background:var(--deep);border-top:1px solid rgba(255,255,255,.1);padding:
   .nav-links a{font-size:15px}
   .cards{grid-template-columns:1fr}
 }
+
+/* ===== 首屏粒子背景（仅 hero 区域，纯新增，不改任何已有规则）===== */
+#fx{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 72%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 72%,transparent 100%)}
 </style>
 </head>
 <body>
@@ -247,6 +252,8 @@ footer{background:var(--deep);border-top:1px solid rgba(255,255,255,.1);padding:
 </nav>
 
 <header class="hero" id="top">
+  <canvas id="fx" aria-hidden="true"></canvas>
+  
   <div class="container hero-c">
     <div class="hero-grid">
       <div>
@@ -464,5 +471,224 @@ footer{background:var(--deep);border-top:1px solid rgba(255,255,255,.1);padding:
   });
 })();
 </script>
+
+<script>
+/* 首屏粒子背景 —— 稳定实现
+ * 层级：#fx(z-index:1) 夹在 .hero 背景之上、.hero-c(z-index:2) 内容之下，纯新增。
+ * 稳定靠五条工程约束（不是算法）：
+ *   1. hero 滚出视口 → 停 rAF（滚动判定用 getBoundingClientRect，完全可预测）
+ *   2. DPR 封顶 2
+ *   3. 帧率封顶 30fps，卡顿时不追帧 → CPU 占用恒定
+ *   4. 粒子数按 hero 面积缩放
+ *   5. 鼠标监听挂 window（canvas 是 pointer-events:none，挂它永不触发）
+ * 另：不跟随 prefers-reduced-motion 关停 —— 与本站其它动效口径一致（站点本机系统动效是关的）。
+ */
+(function () {
+  'use strict';
+  var cv = document.getElementById('fx');
+  var hero = document.querySelector('.hero');
+  if (!cv || !hero) return;
+  var ctx = null;
+  try { ctx = cv.getContext('2d'); } catch (e) { ctx = null; }
+  if (!ctx) { cv.style.display = 'none'; return; }
+
+  var P = { n: 220, link: 200, hiA: 1, mr: 195, lw: 1.05, lt: 0.58, r0: 1.5, r1: 3.1, sp: 0.66 };
+  var PAL = { main: ['30,215,96', '90,200,235', '167,139,250', '255,124,148', '255,190,86'],
+              link: '120,190,200' };
+  var MAX_PIXELS = 12e6;
+
+  var W = 0, H = 0, DPR = 1, parts = [];
+  var lastW = -1, lastH = -1, lastDpr = -1;
+  var mouse = { x: -1e4, y: -1e4, on: false };
+  var LINK2 = P.link * P.link, MR2 = P.mr * P.mr;
+  var STEP = 1000 / 30;
+  var sprites = {};
+  var running = false, heroOn = true;
+  var raf = 0, last = 0, acc = 0;
+  var errCount = 0, errReported = false;
+
+  function sprite(rgb) {
+    if (typeof rgb !== 'string' || !rgb) rgb = '30,215,96';
+    if (sprites[rgb]) return sprites[rgb];
+    var r = 18, s = document.createElement('canvas');
+    s.width = s.height = r * 2;
+    var c = s.getContext('2d');
+    if (!c) return s;
+    var g = c.createRadialGradient(r, r, 0, r, r, r);
+    g.addColorStop(0, 'rgba(' + rgb + ',1)');
+    g.addColorStop(0.32, 'rgba(' + rgb + ',0.42)');
+    g.addColorStop(1, 'rgba(' + rgb + ',0)');
+    c.fillStyle = g; c.beginPath(); c.arc(r, r, r, 0, 6.2832); c.fill();
+    sprites[rgb] = s;
+    return s;
+  }
+
+  function count() {
+    var n = Math.round(P.n * ((W * H) / (1440 * 700)));
+    var lo = Math.round(P.n * 0.5), hi = Math.round(P.n * 1.8);
+    if (!isFinite(n)) return lo;
+    return n < lo ? lo : (n > hi ? hi : n);
+  }
+
+  function seed() {
+    var n = count(), i, m = PAL.main.length;
+    parts = [];
+    for (i = 0; i < n; i++) {
+      parts.push({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - 0.5) * P.sp, vy: (Math.random() - 0.5) * P.sp,
+        r: P.r0 + Math.random() * (P.r1 - P.r0),
+        ph: Math.random() * 6.2832,
+        ci: Math.min(m - 1, Math.max(0, (Math.random() * m) | 0))
+      });
+    }
+  }
+
+  function resize() {
+    var r = hero.getBoundingClientRect();
+    var w = Math.round(r.width), h = Math.round(r.height);
+    if (!(w > 0) || !(h > 0)) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    while (w * h * dpr * dpr > MAX_PIXELS && dpr > 1) dpr = Math.round(dpr * 10 - 1) / 10;
+    if (w === lastW && h === lastH && dpr === lastDpr) return;
+    lastW = w; lastH = h; lastDpr = dpr;
+    W = w; H = h; DPR = dpr;
+    cv.width = Math.round(W * DPR);
+    cv.height = Math.round(H * DPR);
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    seed();
+  }
+
+  function step(dt) {
+    var k = dt / 16.67, i, p, dx, dy, d2, d, f, n = parts.length;
+    for (i = 0; i < n; i++) {
+      p = parts[i];
+      if (mouse.on) {
+        dx = p.x - mouse.x; dy = p.y - mouse.y; d2 = dx * dx + dy * dy;
+        if (d2 < MR2 && d2 > 1) {
+          d = Math.sqrt(d2); f = (P.mr - d) / P.mr;
+          p.vx += (dx / d) * f * 0.42 * k;
+          p.vy += (dy / d) * f * 0.42 * k;
+        }
+      }
+      p.vx *= 0.985; p.vy *= 0.985;
+      if (Math.abs(p.vx) < 0.02) p.vx += (Math.random() - 0.5) * P.sp * 0.16;
+      if (Math.abs(p.vy) < 0.02) p.vy += (Math.random() - 0.5) * P.sp * 0.16;
+      p.x += p.vx * k; p.y += p.vy * k;
+      if (p.x < -26) p.x = W + 26; else if (p.x > W + 26) p.x = -26;
+      if (p.y < -26) p.y = H + 26; else if (p.y > H + 26) p.y = -26;
+    }
+  }
+
+  function paint(t0) {
+    var t = t0 || 0, i, j, p, q, dx, dy, d2, a, n = parts.length, L = P.link;
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineWidth = P.lw;
+    var lpre = 'rgba(' + PAL.link + ',';
+    for (i = 0; i < n; i++) {
+      p = parts[i];
+      for (j = i + 1; j < n; j++) {
+        q = parts[j];
+        dx = p.x - q.x; if (dx > L || dx < -L) continue;
+        dy = p.y - q.y; if (dy > L || dy < -L) continue;
+        d2 = dx * dx + dy * dy;
+        if (d2 < LINK2) {
+          a = (1 - Math.sqrt(d2) / L) * P.lt;
+          ctx.strokeStyle = lpre + a.toFixed(3) + ')';
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = P.hiA;
+    for (i = 0; i < n; i++) {
+      p = parts[i];
+      var breathe = 1 + 0.26 * Math.sin(t * 0.0016 + p.ph);
+      var s = p.r * 3.8 * breathe;
+      ctx.drawImage(sprite(PAL.main[p.ci]), p.x - s, p.y - s, s * 2, s * 2);
+    }
+    ctx.globalAlpha = 1;
+    if (mouse.on) {
+      var mpre = 'rgba(' + PAL.link + ',';
+      for (i = 0; i < n; i++) {
+        p = parts[i];
+        dx = p.x - mouse.x; dy = p.y - mouse.y; d2 = dx * dx + dy * dy;
+        if (d2 < MR2) {
+          a = (1 - Math.sqrt(d2) / P.mr) * 0.58;
+          ctx.strokeStyle = mpre + a.toFixed(3) + ')';
+          ctx.beginPath(); ctx.moveTo(mouse.x, mouse.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function safePaint(t0) {
+    try { paint(t0); errCount = 0; }
+    catch (e) {
+      errCount++;
+      if (!errReported && errCount >= 5) {
+        errReported = true;
+        if (window.console && console.warn) console.warn('[fx] 粒子层已停止：', e);
+        stop();
+      }
+    }
+  }
+
+  function loop(now) {
+    if (!running) return;
+    raf = requestAnimationFrame(loop);
+    if (!last) { last = now; return; }
+    var dt = now - last; last = now;
+    if (dt < 0) return;
+    acc += dt;
+    if (acc < STEP) return;
+    var use = acc > STEP * 3 ? STEP * 3 : acc;
+    acc = 0;
+    try { step(use); } catch (e) {}
+    safePaint(now);
+  }
+
+  function start() {
+    if (running || !heroOn) return;
+    running = true; last = 0; acc = 0;
+    raf = requestAnimationFrame(loop);
+  }
+  function stop() {
+    running = false;
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  }
+  function sync() { heroOn ? start() : stop(); }
+
+  function onScroll() {
+    var r = hero.getBoundingClientRect();
+    heroOn = r.bottom > 0 && r.top < (window.innerHeight || 0);   /* hero 是否在视口内 */
+    sync();
+  }
+
+  window.addEventListener('pointermove', function (e) {
+    var r = cv.getBoundingClientRect();
+    mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.on = true;
+    if (!running && heroOn) sync();
+  }, { passive: true });
+  window.addEventListener('pointerout', function () { mouse.on = false; });
+  window.addEventListener('blur', function () { mouse.on = false; });
+
+  var rt = 0;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { resize(); if (!running) safePaint(0); onScroll(); }, 150);
+  });
+  window.addEventListener('scroll', onScroll, { passive: true });
+  document.addEventListener('visibilitychange', function () {
+    last = 0; acc = 0;
+    if (!document.hidden) onScroll();
+  });
+
+  resize();
+  safePaint(0);
+  onScroll();
+})();
+</script>
+
 </body>
 </html>
